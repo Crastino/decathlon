@@ -31,7 +31,6 @@ public class PracticeRestController {
 	@Autowired
 	private PracticeService service;
 
-	
 	@GetMapping()
 	public List<Product> getAll(HttpServletRequest request) {
 		LOG.info("GET request all");
