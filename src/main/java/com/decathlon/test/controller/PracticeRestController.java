@@ -34,32 +34,44 @@ public class PracticeRestController {
 	
 	@GetMapping()
 	public List<Product> getAll(HttpServletRequest request) {
+		LOG.info("GET request all");
 		return service.getAll(request.getSession());
 	}
 	
 	@GetMapping("/{id}")
 	public Product getById(@PathVariable("id") long id, HttpServletRequest request) {
+		LOG.info("GET request id");
 		return service.getById(id, request.getSession());
 	}
 	
 	@PostMapping()
     public List<Product> create(@RequestBody List<Product> productList, HttpServletRequest request) {
+		LOG.info("POST request");
         return service.create(productList, request.getSession());
     }
 	
 	@PutMapping("/{id}")
     public Product update(@PathVariable("id") long id, @RequestBody Product product, HttpServletRequest request) {
+		LOG.info("PUT request id");
         return service.update(id, product, request.getSession());
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") long id, HttpServletRequest request) {
+    	LOG.info("DELETE request id");
         service.delete(id, request.getSession());
     }
     
     @DeleteMapping()
     public void deleteAll(HttpServletRequest request) {
+    	LOG.info("DELETE request all");
         service.deleteAll(request.getSession());
     }
+    
+    @GetMapping("/exchange/{value}")
+	public double getExchange(@PathVariable("value") double value) throws Exception {
+    	LOG.info("GET request exchange");
+		return service.getExchange(value);
+	}
 
 }

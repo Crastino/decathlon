@@ -2,37 +2,62 @@
 		<title>Pagina di test</title>
 		
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 		
 		<script type="text/javascript"  ="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
 		<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 	</head>
 	<body>
-		<p>Products</p>
+		<div class="text-center"><img src="decathlon.png" class="img-rounded" alt="Cinque Terre" width="200" height="180"></div>
 		
-		<input type="button" id="uploadButton" value="UPLOAD DATA"><br>
+		
+		<input type="button" id="uploadButton" value="UPLOAD DATA">
 		<input type="button" id="deleteAllButton" value="DELETE ALL"><br><br>
 		
-	     Id: <input type="text" id="id"><br>
-	     Code: <input type="text" id="code"><br>
-	     Name: <input type="text" id="name"><br>
-	     Description: <input type="text" id="description"><br>
-	     Image: <input type="text" id="image"><br>
-	     Price: <input type="text" id="price"><br>
-	      Features: <input type="text" id="features"><br><br>
-	         
-	    <input type="button" id="postButton" value="POST"><br>
-	    <input type="button" id="getToUpdateButton" value="GET to UPDATE">
-	    <input type="button" id="putButton" value="PUT"><br>
-	    <input type="button" id="getButton" value="GET"><br>
-	    <input type="button" id="deleteButton" value="DELETE"><br>
+		<div class="form-group row">
+	     <div class="col-xs-3"><label>Id:</label><input type="text" class="form-control input-sm" id="id"></div>
+	     <div class="col-xs-3"><label>Code:</label><input type="text" class="form-control input-sm" id="code"></div>
+	     <div class="col-xs-3"><label>Name:</label><input type="text" class="form-control input-sm" id="name"></div>
+	     <div class="col-xs-3"><label>Description:</label><input type="text" class="form-control input-sm" id="description"></div>
+	     <div class="col-xs-3"><label>Image:</label><input type="text" class="form-control input-sm" id="image"></div>
+	     <div class="col-xs-3"><label>Price:</label><input type="text" class="form-control input-sm" id="price"></div>
+	     <div class="col-xs-3"><label>Features:</label> <input type="text" class="form-control input-sm" id="features"></div><br><br>
+	    </div>
 	    
-	    <table id="datatableRendering" class="display" style="width:100%"></table>
-    
+	    
+	    <label>Convert Euros in Dollars: </label><input type="button" id="exchangeButton" value="CONVERT"><br><br>
+	    <div class="container">
+		    <input type="button" id="getButton" value="GET" class="btn btn-success">
+		    <input type="button" id="postButton" value="POST" class="btn btn-warning">
+		    <input type="button" id="getToUpdateButton" value="GET to UPDATE" class="btn btn-success">
+		    <input type="button" id="putButton" value="PUT" class="btn btn-primary">
+		    <input type="button" id="deleteButton" value="DELETE" class="btn btn-danger">
+	   </div>
+	   <br>
+	   <div>
+	    	<table id="datatableRendering" class="display" style="width:100%"></table>
+    	</div>
+    	
 		<script type="text/javascript">
 		
 			$(document).ready(function() {
 				
 				createDatatable();
+				
+				$("#exchangeButton").click(function(){
+					var euroPrice = $("#price").val();
+					var xhr = new XMLHttpRequest();
+					var url = "product/exchange/" + euroPrice;
+					xhr.open("GET", url, true);
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.onreadystatechange = function () {
+					    if (xhr.readyState === 4 && xhr.status === 200) {
+					    	alert("Prezzo Euro/Dollari\n" + euroPrice + " €\n" + xhr.responseText + " $");
+					    }
+					};
+					
+					xhr.send();
+				  });
 				
 				$("#deleteAllButton").click(function(){
 					var xhr = new XMLHttpRequest();
@@ -40,7 +65,7 @@
 					xhr.open("DELETE", url, true);
 					xhr.setRequestHeader("Content-Type", "application/json");
 					xhr.onreadystatechange = function () {
-					    if (xhr.readyState === 4 && xhr.status === 200) {
+					    if (xhr.readyState === 4 && xhr.status === 200) {   	
 					        location.reload();
 					    }
 					};
