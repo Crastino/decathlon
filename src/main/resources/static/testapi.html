@@ -1,0 +1,262 @@
+<meta charset="UTF-8">
+		<title>Pagina di test</title>
+		
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+		
+		<script type="text/javascript"  ="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+		<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+	</head>
+	<body>
+		<p>Products</p>
+		
+		<input type="button" id="uploadButton" value="UPLOAD DATA"><br>
+		<input type="button" id="deleteAllButton" value="DELETE ALL"><br><br>
+		
+	     Id: <input type="text" id="id"><br>
+	     Code: <input type="text" id="code"><br>
+	     Name: <input type="text" id="name"><br>
+	     Description: <input type="text" id="description"><br>
+	     Image: <input type="text" id="image"><br>
+	     Price: <input type="text" id="price"><br>
+	      Features: <input type="text" id="features"><br><br>
+	         
+	    <input type="button" id="postButton" value="POST"><br>
+	    <input type="button" id="getToUpdateButton" value="GET to UPDATE">
+	    <input type="button" id="putButton" value="PUT"><br>
+	    <input type="button" id="getButton" value="GET"><br>
+	    <input type="button" id="deleteButton" value="DELETE"><br>
+	    
+	    <table id="datatableRendering" class="display" style="width:100%"></table>
+    
+		<script type="text/javascript">
+		
+			$(document).ready(function() {
+				
+				createDatatable();
+				
+				$("#deleteAllButton").click(function(){
+					var xhr = new XMLHttpRequest();
+					var url = "product";
+					xhr.open("DELETE", url, true);
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.onreadystatechange = function () {
+					    if (xhr.readyState === 4 && xhr.status === 200) {
+					        location.reload();
+					    }
+					};
+					
+					xhr.send();
+				  });
+				
+				$("#getButton").click(function(){
+					location.reload();
+				});
+				
+				$("#deleteButton").click(function(){
+					var delRecord = $("#id").val();
+					var xhr = new XMLHttpRequest();
+					var url = "product/" + delRecord;
+					xhr.open("DELETE", url, true);
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.onreadystatechange = function () {
+					    if (xhr.readyState === 4 && xhr.status === 200) {
+					        location.reload();
+					    }
+					};
+					
+					xhr.send();
+				  });
+				
+				$("#getToUpdateButton").click(function(){
+					var updateRecord = $("#id").val();
+					var xhr = new XMLHttpRequest();
+					var url = "product/" + updateRecord;
+					xhr.open("GET", url, true);
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.onreadystatechange = function () {
+					    if (xhr.readyState === 4 && xhr.status === 200) {
+					    	var json = JSON.parse(xhr.responseText);
+					    	$("#id").val(json.id);
+					    	$("#code").val(json.code);
+					    	$("#name").val(json.name);
+					    	$("#description").val(json.description);
+					    	$("#image").val(json.image);
+					    	$("#price").val(json.price);
+					    	var features = "";
+					    	for(j = 0;j < json.featureList.length;j++) {
+					    		if(j>0) {
+					    			features = features + ",";
+					    		}
+					    		features = features + (json.featureList[j].id + "-" + json.featureList[j].name);
+					    		$("#features").val(features);
+					    	}
+					    }
+					};
+					xhr.send();
+				  });
+				
+				
+				$("#postButton").click(function(){
+					var xhr = new XMLHttpRequest();
+					var url = "product";
+					xhr.open("POST", url, true);
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.onreadystatechange = function () {
+					    if (xhr.readyState === 4 && xhr.status === 200) {
+					        var json = JSON.parse(xhr.responseText);
+					        location.reload();
+					    }
+					};
+					var id = $("#id").val();
+					var code = $("#code").val();
+					var name = $("#name").val();
+					var description = $("#description").val();
+					var image = $("#image").val();
+					var price = $("#price").val();
+					var features = $("#features").val();
+					const list = [];
+					const product = {};
+ 					product.id = parseInt(id);
+ 					product.code = code;
+ 					product.name = name;
+ 					product.description = description;
+ 					product.image = image;
+ 					product.price = parseFloat(price);
+ 					list.push(product);
+					product.featureList = [];
+					if(features != "") {
+						var featureArray = features.split(",");
+						for(i = 0;i < featureArray.length;i++) {
+							var splitted = featureArray[i].split("-");
+		 					const feature = {};
+		 					feature.id = splitted[0];
+		 					feature.name = splitted[1];
+							product.featureList.push(feature);
+						}
+					}
+					var data = JSON.stringify(list);
+					xhr.send(data);
+				  });
+				
+				$("#putButton").click(function(){
+					var id = $("#id").val();
+					var code = $("#code").val();
+					var name = $("#name").val();
+					var description = $("#description").val();
+					var image = $("#image").val();
+					var price = $("#price").val();
+					var features = $("#features").val();
+					
+					var xhr = new XMLHttpRequest();
+					var url = "product/" + id;
+					xhr.open("PUT", url, true);
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.onreadystatechange = function () {
+					    if (xhr.readyState === 4 && xhr.status === 200) {
+					        var json = JSON.parse(xhr.responseText);
+					        location.reload();
+					    }
+					};
+					
+					const product = {};
+ 					product.id = parseInt(id);
+ 					product.code = code;
+ 					product.name = name;
+ 					product.description = description;
+ 					product.image = image;
+ 					product.price = parseFloat(price);
+					product.featureList = [];
+					if(features != "") {
+						var featureArray = features.split(",");
+						for(i = 0;i < featureArray.length;i++) {
+							var splitted = featureArray[i].split("-");
+		 					const feature = {};
+		 					feature.id = splitted[0];
+		 					feature.name = splitted[1];
+							product.featureList.push(feature);
+						}
+					}
+					var data = JSON.stringify(product);
+					xhr.send(data);
+				  });	
+				
+				$("#uploadButton").click(function(){
+					var xhr = new XMLHttpRequest();
+					var url = "product";
+					xhr.open("POST", url, true);
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.onreadystatechange = function () {
+					    if (xhr.readyState === 4 && xhr.status === 200) {
+					        var json = JSON.parse(xhr.responseText);
+					        location.reload();
+					    }
+					};
+				
+					var bulk = 
+						[
+						{"id": 1, "code": "00100", "name": "Scarpe calcio Kipsta", "description": "Scarpe calcio Kipsta", "image": "scarpa.png", "price": 34.90,
+							"featureList": [{"id": 101, "name": "tacchetti" }, {"id": 201,"name": "nere"}]
+						},
+ 						{"id": 2, "code": "00200", "name": "Scarpe calcio Adidas", "description": "Scarpe calcio Adidas", "image": "scarpa.png", "price": 49.90,
+							"featureList": [{"id": 102, "name": "tacchetti" }, {"id": 202,"name": "bianche"}]
+						},
+ 						{"id": 3, "code": "00300", "name": "Scarpe ciclismo b'Twin", "description": "Scarpe ciclismo b'Twin", "image": "scarpa.png", "price": 79.90,
+							"featureList": [{"id": 103, "name": "a strappo" }, {"id": 203,"name": "nere"}]
+						},
+ 						{"id": 4, "code": "00400", "name": "Racchetta Artengo", "description": "Racchetta Artengo", "image": "racchetta.png", "price": 99.90,
+ 							"featureList": [{"id": 104, "name": "flessibile" }, {"id": 204,"name": "leggera"}]
+						},
+ 						{"id": 5, "code": "00500", "name": "Scaldacollo Quechua", "description": "Scaldacollo Quechua", "image": "scaldacollo.png", "price": 4.90,
+ 							"featureList": [{"id": 105, "name": "traspirante" }, {"id": 205,"name": "blu"}]
+						}
+ 						]
+					var data = JSON.stringify(bulk);
+					xhr.send(data);
+				  });
+				
+			});
+			
+			function createDatatable() {
+				var dataSet = new Array();
+				
+				$.get("product", function( data ) {
+					
+					for(i = 0;i < data.length;i++) {
+						
+						item = data[i];
+ 						var features = "";
+ 						if (item.id != null) {
+ 							if(item.featureList != null) {
+	 							for(j = 0;j < item.featureList.length;j++) {
+	 								if(j>0) {
+	 									features = features + ",";
+	 								}
+	 								features = features + (item.featureList[j].id + "-" + item.featureList[j].name);
+	 							}
+ 							}
+ 							dataSet.push(
+ 								[item.id, item.code, item.name, item.description, item.image, item.price, features]
+ 							);
+ 						}
+					}
+					
+				    $('#datatableRendering').DataTable( {
+				        data: dataSet,
+				        columns: [
+				            { title: "Id" },
+				            { title: "Code" },
+				            { title: "Name" },
+				            { title: "Description" },
+				            { title: "Image" },
+				            { title: "Price" },
+				            { title: "Features" }
+				        ]
+
+				    } );
+	
+				});
+			}
+		
+		</script>
+	</body>
+</html>
