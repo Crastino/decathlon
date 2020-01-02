@@ -42,9 +42,14 @@ public class BancaItaliaClient {
 			
 			String extUrl;
 			double dollarValue = 0.0d;
-			// calcolo la data di ieri perché la banca d'Italia non ha ancora pubblicato i dati odierni
-			String yesterday = sdfo.format(yesterday());
 			
+			// calcolo la data di ieri perché la banca d'Italia pubblica i dati giornalieri nel pomeriggio
+			// String yesterday = sdfo.format(yesterday());
+			
+			// XXX Ho deciso di cablare l'ultima data che ho testato funzionante per evitare incovenienti
+			// es. in data 01/01/20 i dati non sono stati calcolati
+			// in origine veniva calcolata e passata la data del giorno precedente
+			String yesterday = "2020-01-02";
 			extUrl = externalWsURL.replace("yesterday", yesterday);
 			
 			RestTemplate restTemplate = new RestTemplate();
